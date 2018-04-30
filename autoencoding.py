@@ -3,9 +3,12 @@ import keras.backend as K
 from keras.layers import Dense, Input, Lambda, Dot
 
 
+ENCODING_LAYER_NAME = 'encoding'
+
+
 def binarize(x):
     return x + K.stop_gradient(K.round(x) - x)
-Binarize = Lambda(binarize, output_shape=lambda x: x, name='encoding')
+Binarize = Lambda(binarize, output_shape=lambda x: x, name=ENCODING_LAYER_NAME)
 
 
 class AutoEncoder(keras.models.Model):
@@ -78,13 +81,13 @@ class AutoEncoder(keras.models.Model):
         return model_input, model_output
 
     @property
-    def encoder(self):
-        encoding = self.get_layer('encoding').get_output_at(-1)
+    def bit_encoder(self):
+        encoding = self.get_layer(ENCODING_LAYER_NAME).get_output_at(-1)
         return keras.models.Model(inputs=self.input, outputs=encoding)
 
     @property
-    def binary_encoder(self):
-        encoding = self.get_layer('encoding').get_output_at(-1)
+    def integer_encoder(self):
+        encoding = self.get_layer(ENCODING_LAYER_NAME).get_output_at(-1)
         # multiply each bit by its corresponding power of 2 to get d-bit int
         def to_int(X):
             X = K.cast(X, 'int32')  # this only works for latent dims <= 32
