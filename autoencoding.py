@@ -1,7 +1,6 @@
 import keras
-from keras import backend as K
-from keras.layers import Dense, Input, Lambda
-from keras.models import Model
+import keras.backend as K
+from keras.layers import Dense, Input, Lambda, Dot
 
 
 def binarize(x):
@@ -9,7 +8,7 @@ def binarize(x):
 Binarize = Lambda(binarize, output_shape=lambda x: x, name='encoding')
 
 
-class AutoEncoder(Model):
+class AutoEncoder(keras.models.Model):
     """Autoencoder
 
     Wrapper around several `keras.models.Model`s exposing methods for
@@ -80,6 +79,17 @@ class AutoEncoder(Model):
 
     @property
     def encoder(self):
-        return Model(
-            inputs=model.input,
-            outputs=model.get_layer('encoding').output)
+        encoding = self.get_layer('encoding').get_output_at(-1)
+        return keras.models.Model(inputs=self.input, outputs=encoding)
+
+    @property
+    def binary_encoder(self):
+        encoding = self.get_layer('encoding').get_output_at(-1)
+        # multiply each bit by its corresponding power of 2 to get d-bit int
+        def to_int(X):
+            X = K.cast(X, 'int32')  # this only works for latent dims <= 32
+            latent_dim = K.int_shape(X)[-1]
+            Z = 2**K.arange(latent_dim)
+            return K.dot(X, K.reshape(Z, (-1, 1)))
+        encoding = Lambda(to_int, output_shape=lambda x: x)(encoding)
+        return keras.models.Model(inputs=self.input, outputs=encoding)
