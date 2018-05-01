@@ -1,6 +1,8 @@
 import collections
 import statistics
 
+import numpy as np
+
 class DB:
     def __init__(self, encoder, items=None):
         self.encoder = encoder
