@@ -57,7 +57,8 @@ def choices(population, *, k=1):
     return np.take(population, indices, axis=0)
 
 
-# def init_db
+def cosine_sim(v1, v2):
+    return v1.dot(v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
 
 
 # see,
@@ -74,4 +75,3 @@ def hamming_distance(n1, n2):
         d += 1
         v &= v - 1
     return d
-
