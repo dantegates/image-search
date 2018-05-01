@@ -59,19 +59,3 @@ def choices(population, *, k=1):
 
 def cosine_sim(v1, v2):
     return v1.dot(v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
-
-
-# see,
-# https://en.wikipedia.org/wiki/Hamming_distance#Algorithm_example
-def hamming_distance(n1, n2):
-    # this number is made of each bit in either n1 or n2
-    # but not both
-    v = n1 ^ n2
-    d = 0
-    while v != 0:
-        # subtracting 1 clears the least bit, a, in v and sets all bits
-        # before a which are cleared by the logical &
-        # 2^n = sum(2^m for 0 <= m <= n-1)
-        d += 1
-        v &= v - 1
-    return d

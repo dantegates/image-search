@@ -3,6 +3,23 @@ import statistics
 
 import numpy as np
 
+
+# see,
+# https://en.wikipedia.org/wiki/Hamming_distance#Algorithm_example
+def _hamming_distance(n1, n2):
+    # this number is made of each bit in either n1 or n2
+    # but not both
+    v = n1 ^ n2
+    d = 0
+    while v != 0:
+        # subtracting 1 clears the least bit, a, in v and sets all bits
+        # before a which are cleared by the logical &
+        # 2^n = sum(2^m for 0 <= m <= n-1)
+        d += 1
+        v &= v - 1
+    return d
+
+
 class DB:
     def __init__(self, encoder, items=None):
         self.encoder = encoder
@@ -18,7 +35,7 @@ class DB:
     def _find_hits(self, key, threshold):
         hits = collections.defaultdict(int)
         for other_key in self._db:
-            dist = hamming_distance(other_key, key)
+            dist = _hamming_distance(other_key, key)
             if dist <= threshold:
                 hits[other_key] += 2**(threshold-dist)
         return hits
