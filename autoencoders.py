@@ -22,10 +22,13 @@ class AutoEncoder(keras.models.Model):
 
         Args:
             input_dim (int): Dimension of the input.
-            latent_dim (int): Dimension of the "latent representation" or
+            latent_dim (int): Dimension of the "latent representation" or code.
             intermediate_dims (list): List of `int`s representing the
                 dimmension of the hidden layers up to, but not including, the
                 latent layer. See the example below.
+            output_activation (str or object): The activation used on the final
+                output of the autoencoder. This gets passed on to the underlying
+                `keras` implementation.
 
         Example
         -------
@@ -52,9 +55,13 @@ class AutoEncoder(keras.models.Model):
 
         Usage
         -----
-        >>> autoencoder.fit(x_train, validation_data=x_test)
-        >>> encodings = autoencoder.encode(x_test)
-        >>> decodings = autoencoder.decode(encodings)
+        >>> autoencoder = AutoEncoder(...)
+        >>> autoencoder.compile(...)
+        >>> autoencoder.fit(X_train, X_train, ...)
+        >>> encoder = autoencoder.integer_encoder(X)
+        ... np.array([[12387],
+                      [3982909],
+                      ...])
         """
         self._encoder = self._decoder = self._model = None
         model_input, model_output = self._init_model(
