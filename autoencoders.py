@@ -69,7 +69,8 @@ class AutoEncoder(keras.models.Model):
         super().__init__(inputs=model_input, outputs=model_output)
 
 
-    def _init_model(self, input_dim, latent_dim, intermediate_dims, output_activation):
+    def _init_model(self, input_dim, latent_dim, intermediate_dims,
+                    output_activation='sigmoid'):
         """Create ``self._model`` for training the autoencoder as well as
         ``self._encoder`` and ``self._decoder`` for encoding/decoding
         output/codes.
