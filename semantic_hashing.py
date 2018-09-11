@@ -26,7 +26,7 @@ def _hamming_distance(n1, n2):
     return d
 
 
-class Table:
+class LookupTable:
     def __init__(self, encoder, items, threshold=3):
         self.encoder = encoder
         self.threshold = threshold
@@ -35,18 +35,20 @@ class Table:
         # lookup table for list of image IDs by encoding
         self._semantic_hash_table = collections.defaultdict(list)
         # numpy array that we can quickly compute hamming distance over
-        self._table_keys = np.array(self._semantic_hash_table)
+        self._table_keys = np.array(self._semantic_hash_table.keys())
         self._populate_data_structures(items)
         # defaultdict is convenient when initializing the DB instance but
         # dangerous to keep around.
         self._semantic_hash_table.default_factory = None  
 
     def describe(self):
+        number_of_buckets = len(self._semantic_hash_table.keys())
         bucket_sizes = [len(v) for v in self._semantic_hash_table.values()]
         median_density = statistics.median(bucket_sizes)
         mean_density = statistics.mean(bucket_sizes)
         min_density = min(bucket_sizes)
         max_density = max(bucket_sizes)
+        print('number of buckets:', number_of_buckets)
         print('median density:', median_density)
         print('mean density:', mean_density)
         print('min density:', min_density)
